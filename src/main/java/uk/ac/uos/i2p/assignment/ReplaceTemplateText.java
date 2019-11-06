@@ -15,7 +15,7 @@ public class ReplaceTemplateText implements TemplateProcessor {
 	@Override
 	public void loadTemplates(Map<String, String> templates) {
 		for (Map.Entry<String, String> temp : templates.entrySet()) {
-			if (temp != null && temp != templateMap) {
+			if (temp.getKey() != null && !templates.containsKey(temp.getKey())) {
 				templateMap.put(temp.getKey(), temp.getValue());
 				System.out.println(temp.getKey());
 			}			
@@ -24,15 +24,13 @@ public class ReplaceTemplateText implements TemplateProcessor {
 
 	@Override
 	public String expandTemplate(Map<String, Object> context) {
-		for (String key : context.keySet()) {
-			String keyValue = context.get(key).toString();
-			
-//			System.out.println(keyValue);
+		String replacedTemplate = templateMap.get(context.get("$template"));
+		for (Map.Entry<String, Object> expand : context.entrySet()) {
+			String keyValue = expand.getKey();
+			// System.out.println(keyValue);
+			String regex = "\\$\\{" + expand.getKey() + "\\}";
+			replacedTemplate = replacedTemplate.replaceAll(regex, expand.getValue().toString());
 		}
-		
-		
-		
-		return null;
+		return replacedTemplate;
 	}
-
 }

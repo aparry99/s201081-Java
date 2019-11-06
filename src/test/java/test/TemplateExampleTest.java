@@ -9,6 +9,7 @@ import uk.ac.uos.i2p.assignment.ReplaceTemplateText;
 import uk.ac.uos.i2p.assignment.TemplateProcessor;
 
 public class TemplateExampleTest {
+	
 	@Test
 	void testTemplate() {
 		TemplateProcessor processor = new ReplaceTemplateText();
@@ -30,12 +31,11 @@ public class TemplateExampleTest {
 		TemplateProcessor processor = new ReplaceTemplateText();
 		
 		Map<String, String> templates = new HashMap<>();
-		processor.loadTemplates(templates);
 		
 		templates.put("name", "${name}");
 		templates.put("amount", "${amount}");
 		
-		
+		processor.loadTemplates(templates);
 		
 		Map<String, Object> context = new HashMap<String, Object>();
 		
