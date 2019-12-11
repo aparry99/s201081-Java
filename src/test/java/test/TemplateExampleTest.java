@@ -11,7 +11,7 @@ import uk.ac.uos.i2p.assignment.TemplateProcessor;
 public class TemplateExampleTest {
 	
 	@Test
-	void testTemplate() {
+	void WHEN_loadTemplateIsCalledAndTemplateIsPresent() {
 		TemplateProcessor processor = new ReplaceTemplateText();
 		processor.loadTemplate("offer", "Dear ${name}, We are happy to offer you a bonus of £${amount}.");
 		
@@ -27,14 +27,27 @@ public class TemplateExampleTest {
 	}
 	
 	@Test
-	void testTemplates() {
+	void WHEN_loadTemplateIsCalledAndTemplateIsNotPresent() {
+		TemplateProcessor processor = new ReplaceTemplateText();
+		processor.loadTemplate("offer", null);
+		
+		Map<String, Object> context = new HashMap<String, Object>();
+		
+		context.put("name", "Arthur");
+		context.put("amount", 20);
+		context.put("$template", "offer");
+		
+		String result = processor.expandTemplate(context);
+		
+		assertEquals("", result);
+	}
+	
+	@Test
+	void WHEN_loadTemplatesAreCalledAndTemplatesArePresent() {
 		TemplateProcessor processor = new ReplaceTemplateText();
 		
 		Map<String, String> templates = new HashMap<>();
-		
-		templates.put("name", "${name}");
-		templates.put("amount", "${amount}");
-		
+		templates.put("offer", "Dear ${name}, We are happy to offer you a bonus of £${amount}.");
 		processor.loadTemplates(templates);
 		
 		Map<String, Object> context = new HashMap<String, Object>();
@@ -47,6 +60,27 @@ public class TemplateExampleTest {
 		
 		assertEquals("Dear Arthur, We are happy to offer you a bonus of £20.", result);
 	}
+	
+	@Test
+	void WHEN_loadTemplatesAreCalledAndTemplatesAreNotPresent() {
+		TemplateProcessor processor = new ReplaceTemplateText();
+		
+		Map<String, String> templates = new HashMap<>();
+		templates.put("offer", null);
+		processor.loadTemplates(templates);
+		
+		Map<String, Object> context = new HashMap<String, Object>();
+		
+		context.put("name", "Arthur");
+		context.put("amount", 20);
+		context.put("$template", "offer");
+		
+		String result = processor.expandTemplate(context);
+		
+		assertEquals("", result);
+	}
+	
+	
 }
 
 
