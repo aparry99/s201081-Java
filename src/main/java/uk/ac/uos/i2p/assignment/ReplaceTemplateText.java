@@ -3,8 +3,8 @@ package uk.ac.uos.i2p.assignment;
 import java.util.*;
 import java.util.regex.*;
 
-import exceptions.ContextValidationException;
-import exceptions.TemplateDoesNotExistException;
+//import exceptions.ContextValidationException;
+//import exceptions.TemplateDoesNotExistException;
 
 public class ReplaceTemplateText implements TemplateProcessor {
 	Map<String, String> templateMap = new HashMap<>();
@@ -28,6 +28,7 @@ public class ReplaceTemplateText implements TemplateProcessor {
 		String replacedTemplate = templateMap.get(context.get(TEMPLATE_KEY));
 		// set variable to null value to return in case of null $template
 		String nullTemplate = "";
+		
 		if (replacedTemplate != null) {
 			for (Map.Entry<String, Object> expand : context.entrySet()) {
 				String keyValue = expand.getKey();
