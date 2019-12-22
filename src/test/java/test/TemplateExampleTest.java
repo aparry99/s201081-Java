@@ -78,6 +78,22 @@ public class TemplateExampleTest {
 		assertEquals("", result);
 	}
 	
+	@Test
+	void WHEN_loadTemplateIsCalledAndSpecialCharactersArePresent() {
+		TemplateProcessor processor = new ReplaceTemplateText();
+		processor.loadTemplate("offer", "Dear ${name}, We are happy to offer you a bonus of £${amount}.");
+		
+		Map<String, Object> context = new HashMap<String, Object>();
+		
+		context.put("name", "~!@#%^&*()-_=+[]\\{}|;':\",./<>?");
+		context.put("amount", 20);
+		context.put("$template", "offer");
+		
+		String result = processor.expandTemplate(context);
+		
+		assertEquals("Dear ~!@#%^&*()-_=+[]{}|;':\",./<>?, We are happy to offer you a bonus of £20.", result);
+	}
+	
 	// TEMPLATES
 	// TEMPLATES
 	// TEMPLATES
@@ -159,7 +175,7 @@ public class TemplateExampleTest {
 	}
 	
 	@Test
-	void WHEN_loadTemplatesAreCalledAndMultipleTemplatesArePresent() {
+	void WHEN_loadTemplatesIsCalledAndMultipleTemplatesArePresent() {
 		TemplateProcessor processor = new ReplaceTemplateText();
 		
 		Map<String, String> templates = new HashMap<>();
@@ -191,6 +207,43 @@ public class TemplateExampleTest {
 		context.put("$template", "reminder");
 		String result3 = processor.expandTemplate(context);
 		assertEquals("Dear Mr. Abbot, This is a reminder that the amount of £149.99 is overdue.", result3);
+		
+		context.clear();
+	}
+	
+	@Test
+	void WHEN_loadTemplatesIsCalledAndMultipleTemplatesArePresent_BUT_ContextMismatch() {
+		TemplateProcessor processor = new ReplaceTemplateText();
+		
+		Map<String, String> templates = new HashMap<>();
+		templates.put("offer", "Dear ${name}, We are happy to offer you a bonus of £${amount}.");
+		templates.put("weather", "Hi ${firstName}, The weather today is ${weather}.");
+		templates.put("reminder", "Dear Mr. ${lastName}, This is a reminder that the amount of £${overdue} is overdue.");
+		processor.loadTemplates(templates);
+		
+		Map<String, Object> context = new HashMap<String, Object>();
+		
+		context.put("tool", "Arthur");
+		context.put("money", 20);
+		context.put("$templates", "offer");
+		String result = processor.expandTemplate(context);
+		assertEquals("", result);
+		
+		context.clear();
+		
+		context.put("firstname", "Jimmy");
+		context.put("weatherType", "cold");
+		context.put("$templates", "weather");
+		String result2 = processor.expandTemplate(context);
+		assertEquals("", result2);
+		
+		context.clear();
+		
+		context.put("lastname", "Abbot");
+		context.put("overdueMoney", 149.99);
+		context.put("$templates", "reminder");
+		String result3 = processor.expandTemplate(context);
+		assertEquals("", result3);
 		
 		context.clear();
 	}

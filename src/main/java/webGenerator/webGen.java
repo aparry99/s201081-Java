@@ -3,9 +3,18 @@ package webGenerator;
 import uk.ac.uos.i2p.assignment.ReplaceTemplateText;
 import uk.ac.uos.i2p.assignment.TemplateProcessor;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import com.google.gson.*;
+import com.google.gson.stream.JsonReader;
 
 public class webGen {
 	public static void main(String[] args) {
@@ -17,9 +26,10 @@ public class webGen {
 		File source = new File(args[1]);
 		File templates = new File(args[2]);
 		webGen webgen = new webGen();
-		webgen.process(destination, source, templates);
 		
+		TemplateProcessor processor = new ReplaceTemplateText();
 		
+		processor.loadTemplates(webgen.processFiles(templates));
 		
 		//source, destination, templates
 		
@@ -33,18 +43,54 @@ public class webGen {
 		// folder with any text format
 	}
 	
-	public void process(File destination, File source, File templates) {
-		if (!destination.isDirectory() || !source.isDirectory() || !templates.isDirectory()) {
+	public Map<String, String> processFiles(File templates) {
+		if (!templates.isDirectory()) {
 			System.out.println("Not a directory!");
-			//do exit
+			System.exit(2);
 		}
 		
 		File[] files = templates.listFiles();
 		
+		Map<String, String> newTemplates = new HashMap<>();
+		
+		//https://www.mkyong.com/java/how-to-read-file-from-java-bufferedreader-example/
+		
 		for (File child : files) {
-			System.out.println(child.getName());
+			if (!child.isDirectory()) {
+				//find out why buffered reader
+				//read file line by line, puts into newTemplates via string
+				try (BufferedReader buffread = new BufferedReader (new FileReader(child.getPath()))) {
+					StringBuilder stringbuild = new StringBuilder();
+					String line = buffread.readLine();
+					
+					//loop through each line
+					while (line != null) {
+						stringbuild.append(line);
+						stringbuild.append(System.lineSeparator());
+						line = buffread.readLine();
+						
+					}
+					String everything = stringbuild.toString();
+					newTemplates.put(child.getName(), everything);
+				}
+				catch (Exception e) {
+					System.out.println(e);
+				}
+			}
+			else {
+				System.out.println("Not a file");
+			}
+			System.out.println(newTemplates);
 		}
+		return newTemplates;
+		
 	}
+	
+	public static getContext() {
+		
+	}
+	
+	
 	
 	//templates, loop through getting templates
 }
