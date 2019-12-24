@@ -88,7 +88,7 @@ public class webGen {
 	}
 	
 	class Response {
-		Map<String, App> descriptor;
+		Map<String, String> descriptor;
 		//get set
 	}
 	
@@ -119,10 +119,7 @@ public class webGen {
 				//read file line by line, puts into newTemplates via string
 				try (BufferedReader buffread = new BufferedReader (new FileReader(child.getPath()))) {
 					StringBuilder stringbuild = new StringBuilder();
-					String line = buffread.readLine();
-					
-					Gson gson = new Gson();
-					Response response = gson.fromJson(myJson, Response.class);
+					String line = buffread.readLine(); 
 					
 					//loop through each line
 					while (line != null) {
@@ -132,6 +129,10 @@ public class webGen {
 					}
 					String everything = stringbuild.toString();
 					newContext.put(child.getName(), everything);
+					
+					Gson gson = new Gson();
+					String response = gson.fromJson(newContext, Response.class);
+					System.out.println(response);
 				}
 				catch (Exception e) {
 					System.out.println(e);
