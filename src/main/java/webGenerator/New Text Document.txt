@@ -29,8 +29,6 @@ public class webGen {
 		
 		TemplateProcessor processor = new ReplaceTemplateText();
 		
-		webgen.processContext(source);
-		
 		Map<String, String> storedTemplates = webgen.processFiles(destination, source, templates);
 		processor.loadTemplates(storedTemplates);
 		//source, destination, templates
@@ -96,6 +94,8 @@ public class webGen {
 		
 		File[] files = source.listFiles();
 		
+		
+		
 		Map<String, String> newContext = new HashMap<>();
 		
 		//https://www.mkyong.com/java/how-to-read-file-from-java-bufferedreader-example/
@@ -118,7 +118,7 @@ public class webGen {
 					newContext.put(child.getName(), everything);
 					
 					Gson gson = new Gson();
-					String response = gson.fromJson(new JsonReader(new FileReader(child.getAbsolutePath())), JsonElement.class);
+					String response = gson.fromJson(newContext, Response.class);
 					System.out.println(response);
 				}
 				catch (Exception e) {
