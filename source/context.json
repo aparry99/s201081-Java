@@ -1,7 +1,18 @@
 {
-  "template": "offer",
+  "template": "Test1",
   "context": {
-    "firstName": "Jim",
-    "amount": 20
+    "count": "one"
+  }
+},
+{
+  "template": "Test2",
+  "context": {
+    "count": "two"
+  }
+},
+{
+  "template": "Test3",
+  "context": {
+    "count": "three"
   }
 }

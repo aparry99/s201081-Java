@@ -1,1 +1,1 @@
-Hello, one
+Hello, ${count}

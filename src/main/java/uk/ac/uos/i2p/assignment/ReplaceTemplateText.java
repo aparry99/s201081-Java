@@ -35,6 +35,7 @@ public class ReplaceTemplateText implements TemplateProcessor {
 				String regex = "\\$\\{" + keyValue + "\\}";
 				replacedTemplate = replacedTemplate.replaceAll(regex, expand.getValue().toString());
 			}
+			System.out.println(replacedTemplate);
 			return replacedTemplate;
 		}
 		return nullTemplate;

@@ -29,10 +29,17 @@ public class webGen {
 		
 		TemplateProcessor processor = new ReplaceTemplateText();
 		
-		webgen.processContext(source);
+//		webgen.processContext(source);
 		
 		Map<String, String> storedTemplates = webgen.processFiles(destination, source, templates);
 		processor.loadTemplates(storedTemplates);
+		
+		for(Map<String, String> template : storedTemplates)
+		{
+			
+		}
+		
+		processor.expandTemplate(webgen.processContext(source));
 		//source, destination, templates
 		
 		//source = context
@@ -82,13 +89,14 @@ public class webGen {
 			else {
 				System.out.println("Not a file");
 			}
-			System.out.println(newTemplates);
+//			System.out.println(newTemplates);
 		}
+//		System.out.println(newTemplates);
 		return newTemplates;
 		
 	}
 
-	public Map<String, String> processContext(File source) {
+	public Map<String, Object> processContext(File source) {
 		if (!source.isDirectory()) {
 			System.out.println("Not a directory!");
 			System.exit(2);
@@ -96,7 +104,7 @@ public class webGen {
 		
 		File[] files = source.listFiles();
 		
-		Map<String, String> newContext = new HashMap<>();
+		Map<String, Object> newContext = new HashMap<>();
 		
 		//https://www.mkyong.com/java/how-to-read-file-from-java-bufferedreader-example/
 		
@@ -118,8 +126,7 @@ public class webGen {
 					newContext.put(child.getName(), everything);
 					
 					Gson gson = new Gson();
-					String response = gson.fromJson(new JsonReader(new FileReader(child.getAbsolutePath())), JsonElement.class);
-					System.out.println(response);
+					JsonObject response = gson.fromJson(new JsonReader(new FileReader(child.getAbsolutePath())), JsonElement.class);
 				}
 				catch (Exception e) {
 					System.out.println(e);
@@ -128,7 +135,7 @@ public class webGen {
 			else {
 				System.out.println("Not a file");
 			}
-			System.out.println(newContext);
+//			System.out.println(newContext);
 		}
 		return newContext;
 		
