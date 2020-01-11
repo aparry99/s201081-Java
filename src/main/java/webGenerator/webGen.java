@@ -10,6 +10,7 @@ import java.util.Map;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -29,17 +30,14 @@ public class webGen {
 		
 		TemplateProcessor processor = new ReplaceTemplateText();
 		
-//		webgen.processContext(source);
-		
 		Map<String, String> storedTemplates = webgen.processFiles(destination, source, templates);
 		processor.loadTemplates(storedTemplates);
 		
-		for(Map<String, String> template : storedTemplates)
-		{
-			
+		for(Map.Entry<String, String> template : storedTemplates.entrySet()) {
+			 //stores processed context (source) into map contexts
+			processor.expandTemplate(webgen.processContext(source, template.getKey()));
 		}
 		
-		processor.expandTemplate(webgen.processContext(source));
 		//source, destination, templates
 		
 		//source = context
@@ -96,11 +94,13 @@ public class webGen {
 		
 	}
 
-	public Map<String, Object> processContext(File source) {
+	public Map<String, Object> processContext(File source, String templateName) {
 		if (!source.isDirectory()) {
 			System.out.println("Not a directory!");
 			System.exit(2);
 		}
+		
+		
 		
 		File[] files = source.listFiles();
 		
@@ -112,36 +112,37 @@ public class webGen {
 			if (!child.isDirectory()) {
 				//find out why buffered reader
 				//read file line by line, puts into newTemplates via string
-				try (BufferedReader buffread = new BufferedReader (new FileReader(child.getPath()))) {
-					StringBuilder stringbuild = new StringBuilder();
-					String line = buffread.readLine(); 
-					
-					//loop through each line
-					while (line != null) {
-						stringbuild.append(line);
-						stringbuild.append(System.lineSeparator());
-						line = buffread.readLine();
+					//initialize gson
+					try {
+						Gson gson = new Gson();
+						JsonObject response = gson.fromJson(new JsonReader(new FileReader(child.getAbsolutePath())), JsonElement.class);
+						for (JsonElement jsonContext : response.getAsJsonArray()) {
+							System.out.println(jsonContext.getAsJsonObject().get("template").getAsString());
+							System.out.println(templateName);
+							if (jsonContext.getAsJsonObject().get("template").getAsString().equals(templateName)) {
+								//map object from json to string $template in hashmap newContext
+								newContext.put("$template", jsonContext.getAsJsonObject().get("template").getAsString());
+								
+								for (JsonElement jsonTemplate : jsonContext.getAsJsonObject().get("context").getAsJsonArray()) {
+									for(String templateContext : jsonTemplate.getAsJsonObject().keySet()) {
+										newContext.put(templateContext, jsonTemplate.getAsJsonObject().get(templateContext).getAsString());
+										System.out.println(templateContext);
+										System.out.println(jsonTemplate.getAsJsonObject().get(templateContext).getAsString());
+									}
+								}
+							}
+						}
+						
+					} catch (JsonIOException e) {
+						e.printStackTrace();
+					} catch (JsonSyntaxException e) {
+						e.printStackTrace();
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
 					}
-					String everything = stringbuild.toString();
-					newContext.put(child.getName(), everything);
-					
-					Gson gson = new Gson();
-					JsonObject response = gson.fromJson(new JsonReader(new FileReader(child.getAbsolutePath())), JsonElement.class);
-				}
-				catch (Exception e) {
-					System.out.println(e);
 				}
 			}
-			else {
-				System.out.println("Not a file");
-			}
-//			System.out.println(newContext);
-		}
-		return newContext;
 		
+		return newContext;
+		}
 	}
-
-	
-	
-	//templates, loop through getting templates
-}
