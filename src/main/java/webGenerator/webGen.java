@@ -34,9 +34,11 @@ public class webGen {
 		processor.loadTemplates(storedTemplates);
 		
 		for(Map.Entry<String, String> template : storedTemplates.entrySet()) {
-			 //stores processed context (source) into map contexts
-			processor.expandTemplate(webgen.processContext(source, template.getKey()));
+			String regex = "\\.\\w+";
+			String tempKey = template.getKey().toString().split(regex)[0];
+			System.out.println(processor.expandTemplate(webgen.processContext(source, tempKey)));
 		}
+		//REGEX REMOVE TEXT
 		
 		//source, destination, templates
 		
@@ -104,25 +106,26 @@ public class webGen {
 		
 		File[] files = source.listFiles();
 		
+		System.out.println(source.getPath());
+		
 		Map<String, Object> newContext = new HashMap<>();
 		
 		//https://www.mkyong.com/java/how-to-read-file-from-java-bufferedreader-example/
 		
 		for (File child : files) {
 			if (!child.isDirectory()) {
-				//find out why buffered reader
-				//read file line by line, puts into newTemplates via string
 					//initialize gson
 					try {
 						Gson gson = new Gson();
-						JsonObject response = gson.fromJson(new JsonReader(new FileReader(child.getAbsolutePath())), JsonElement.class);
+						JsonElement response = gson.fromJson(new JsonReader(new FileReader(child.getAbsolutePath())), JsonElement.class);
+						System.out.println(response);
 						for (JsonElement jsonContext : response.getAsJsonArray()) {
-							System.out.println(jsonContext.getAsJsonObject().get("template").getAsString());
-							System.out.println(templateName);
+							//System.out.println(jsonContext.getAsJsonObject().get("template").getAsString());
+							//System.out.println(templateName);
 							if (jsonContext.getAsJsonObject().get("template").getAsString().equals(templateName)) {
 								//map object from json to string $template in hashmap newContext
 								newContext.put("$template", jsonContext.getAsJsonObject().get("template").getAsString());
-								
+								//System.out.println(jsonContext.getAsJsonObject().get("template").getAsString());
 								for (JsonElement jsonTemplate : jsonContext.getAsJsonObject().get("context").getAsJsonArray()) {
 									for(String templateContext : jsonTemplate.getAsJsonObject().keySet()) {
 										newContext.put(templateContext, jsonTemplate.getAsJsonObject().get(templateContext).getAsString());
@@ -132,13 +135,12 @@ public class webGen {
 								}
 							}
 						}
-						
 					} catch (JsonIOException e) {
-						e.printStackTrace();
+						//e.printStackTrace();
 					} catch (JsonSyntaxException e) {
-						e.printStackTrace();
+						//e.printStackTrace();
 					} catch (FileNotFoundException e) {
-						e.printStackTrace();
+						//e.printStackTrace();
 					}
 				}
 			}

@@ -39,6 +39,5 @@ public class ReplaceTemplateText implements TemplateProcessor {
 			return replacedTemplate;
 		}
 		return nullTemplate;
-		
 	}
 }
