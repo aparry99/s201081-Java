@@ -126,8 +126,14 @@ public class webGen {
 					for(Map.Entry<String, String> template : storedTemplates.entrySet()) {
 						String regex = "\\.\\w+";
 						String tempKey = template.getKey().toString().split(regex)[0];
-						System.out.println(processor.expandTemplate(webgen.processContext(source, tempKey)));
+						Map<String, Object> context = webgen.processContext(source, tempKey);
+						//System.out.println(context);
+						processor.expandTemplate(context);
 					}
+				}
+				else {
+					System.out.println("User declined process... \n Terminating program");
+			    	System.exit(2);
 				}
 			}
 			
@@ -146,7 +152,9 @@ public class webGen {
 				for(Map.Entry<String, String> template : storedTemplates.entrySet()) {
 					String regex = "\\.\\w+";
 					String tempKey = template.getKey().toString().split(regex)[0];
-					System.out.println(processor.expandTemplate(webgen.processContext(source, tempKey)));
+					Map<String, Object> context = webgen.processContext(source, tempKey);
+					//System.out.println(context);
+					processor.expandTemplate(context);
 				}
 			}
 			System.exit(2);
@@ -268,9 +276,9 @@ public class webGen {
 					//initialize gson
 					try {
 						Gson gson = new Gson();
-						JsonElement response = gson.fromJson(new JsonReader(new FileReader(child.getAbsolutePath())), JsonElement.class);
+						JsonElement json = gson.fromJson(new JsonReader(new FileReader(child.getAbsolutePath())), JsonElement.class);
 						//System.out.println(response);
-						for (JsonElement jsonContext : response.getAsJsonArray()) {
+						for (JsonElement jsonContext : json.getAsJsonArray()) {
 							//System.out.println(jsonContext.getAsJsonObject().get("template").getAsString());
 							//System.out.println(templateName);
 							if (jsonContext.getAsJsonObject().get("template").getAsString().equals(templateName)) {
