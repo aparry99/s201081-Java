@@ -12,6 +12,8 @@ public class ReplaceTemplateText implements TemplateProcessor {
 	@Override
 	public void loadTemplate(String name, String template) {
 			templateMap.put(name, template);
+			//System.out.println(name);
+			//System.out.println(template);
 	}
 	
 	@Override
@@ -25,12 +27,15 @@ public class ReplaceTemplateText implements TemplateProcessor {
 	public String expandTemplate(Map<String, Object> context) {
 		// get value of $template from templateMap
 		String replacedTemplate = templateMap.get(context.get(TEMPLATE_KEY));
+		//System.out.println(templateMap.get(context.get(TEMPLATE_KEY)));
 		// set variable to null value to return in case of null $template
 		String nullTemplate = "";
 		
 		if (replacedTemplate != null) {
 			for (Map.Entry<String, Object> expand : context.entrySet()) {
 				String keyValue = expand.getKey();
+				//System.out.println("getKey \n " + expand.getKey());
+				//System.out.println("getValue \n " + expand.getValue());
 				String regex = "\\$\\{" + keyValue + "\\}";
 				replacedTemplate = replacedTemplate.replaceAll(regex, expand.getValue().toString());
 			}

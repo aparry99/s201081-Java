@@ -172,8 +172,12 @@ public class webGen {
 		for(Map.Entry<String, String> template : storedTemplates.entrySet()) {
 			String regex = "\\.\\w+";
 			String tempKey = template.getKey().toString().split(regex)[0];
-			System.out.println(processor.expandTemplate(webgen.processContext(source, tempKey)));
+			Map<String, Object> context = webgen.processContext(source, tempKey);
+			//System.out.println(context);
+			processor.expandTemplate(context);
 		}
+		
+		
 		
 		//source, destination, templates
 		
@@ -219,7 +223,15 @@ public class webGen {
 						
 					}
 					String everything = stringbuild.toString();
-					newTemplates.put(child.getName(), everything);
+					
+					String regex = "\\.\\w+";
+					String childName = child.getName().split(regex)[0];
+					
+					String utfReplace = everything.replaceAll(new String("Â".getBytes("UTF-8"), "UTF-8"), "");
+			        //System.out.println(utfReplace);
+					newTemplates.put(childName, utfReplace);
+					//System.out.println(childName);
+					//System.out.println(everything);
 				}
 				catch (Exception e) {
 					System.out.println(e);
@@ -245,7 +257,7 @@ public class webGen {
 		
 		File[] files = source.listFiles();
 		
-		System.out.println(source.getPath());
+		//System.out.println(source.getPath());
 		
 		Map<String, Object> newContext = new HashMap<>();
 		
@@ -257,7 +269,7 @@ public class webGen {
 					try {
 						Gson gson = new Gson();
 						JsonElement response = gson.fromJson(new JsonReader(new FileReader(child.getAbsolutePath())), JsonElement.class);
-						System.out.println(response);
+						//System.out.println(response);
 						for (JsonElement jsonContext : response.getAsJsonArray()) {
 							//System.out.println(jsonContext.getAsJsonObject().get("template").getAsString());
 							//System.out.println(templateName);
@@ -268,22 +280,21 @@ public class webGen {
 								for (JsonElement jsonTemplate : jsonContext.getAsJsonObject().get("context").getAsJsonArray()) {
 									for(String templateContext : jsonTemplate.getAsJsonObject().keySet()) {
 										newContext.put(templateContext, jsonTemplate.getAsJsonObject().get(templateContext).getAsString());
-										System.out.println(templateContext);
-										System.out.println(jsonTemplate.getAsJsonObject().get(templateContext).getAsString());
+//										System.out.println("getKey \n " + templateContext);
+//										System.out.println("getValue \n " + jsonTemplate.getAsJsonObject().get(templateContext).getAsString());
 									}
 								}
 							}
 						}
 					} catch (JsonIOException e) {
-						//e.printStackTrace();
+						e.printStackTrace();
 					} catch (JsonSyntaxException e) {
-						//e.printStackTrace();
+						e.printStackTrace();
 					} catch (FileNotFoundException e) {
-						//e.printStackTrace();
+						e.printStackTrace();
 					}
 				}
 			}
-		
 		return newContext;
 		}
 	}

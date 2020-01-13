@@ -1,13 +1,16 @@
 [{
-  "template": "Test1",
+  "template": "offer",
   "context": [{
-    "count": "one"
+    "name": "Arthur",
+	"amount": 20,
+	"$template": "offer"
   }]
 },
 {
-  "template": "Test2",
+  "template": "java",
   "context": [{
-    "count": "two"
+    "language": "java",
+	"difficulty": "easy"
   }]
 },
 {

@@ -1,0 +1,1 @@
+Dear ${name}, We are happy to offer you a bonus of £${amount}.
