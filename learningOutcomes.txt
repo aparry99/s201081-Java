@@ -1,6 +1,0 @@
-Learning outcomes:
-
-1. ifs, loops, while, for, etc...
-2. classes, objects, interfaces, inheritance - polymorphism
-3. design, different approaches (outside in, inside out)
-4. make it work, explain how, test it, prove it works, what problems were encountered and how were they solved

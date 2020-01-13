@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"exceptions","l":"ContextValidationException"},{"p":"uk.ac.uos.i2p.assignment","l":"ReplaceTemplateText"},{"p":"exceptions","l":"TemplateDoesNotExistException"},{"p":"test","l":"TemplateExampleTest"},{"p":"uk.ac.uos.i2p.assignment","l":"TemplateProcessor"},{"p":"uk.ac.uos.i2p.webGenerator","l":"webGen"}]
