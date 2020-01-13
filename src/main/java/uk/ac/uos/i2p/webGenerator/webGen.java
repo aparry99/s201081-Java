@@ -136,7 +136,6 @@ public class webGen {
 			    	System.exit(2);
 				}
 			}
-			
 			else {
 				System.out.println("Output:");
 				webGen webgen = new webGen();
@@ -165,11 +164,6 @@ public class webGen {
 		File source = new File(args[1]);
 		File templates = new File(args[2]);
 		
-//		webGen webgen = new webGen();
-//		File destination = new File(args[0]);
-//		File source = new File(args[1]);
-//		File templates = new File(args[2]);
-		
 		//System.out.println(source.getAbsolutePath());
 		
 		TemplateProcessor processor = new ReplaceTemplateText();
@@ -184,9 +178,6 @@ public class webGen {
 			//System.out.println(context);
 			processor.expandTemplate(context);
 		}
-		
-		
-		
 		//source, destination, templates
 		
 		//source = context
@@ -228,7 +219,6 @@ public class webGen {
 						stringbuild.append(line);
 						stringbuild.append(System.lineSeparator());
 						line = buffread.readLine();
-						
 					}
 					String everything = stringbuild.toString();
 					
@@ -247,12 +237,10 @@ public class webGen {
 			}
 			else {
 				System.out.println("Not a file");
+				System.exit(2);
 			}
-//			System.out.println(newTemplates);
 		}
-//		System.out.println(newTemplates);
 		return newTemplates;
-		
 	}
 
 	public Map<String, Object> processContext(File source, String templateName) {
@@ -261,15 +249,8 @@ public class webGen {
 			System.exit(2);
 		}
 		
-		
-		
 		File[] files = source.listFiles();
-		
-		//System.out.println(source.getPath());
-		
 		Map<String, Object> newContext = new HashMap<>();
-		
-		//https://www.mkyong.com/java/how-to-read-file-from-java-bufferedreader-example/
 		
 		for (File child : files) {
 			if (!child.isDirectory()) {
