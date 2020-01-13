@@ -187,16 +187,6 @@ public class webGen {
 		// folder with any text format
 	}
 	
-//	public static void isPathValid(String path) {
-//	    File f = new File(path);
-//	    try {
-//	    	f.getCanonicalPath();
-//	    }
-//	    catch (Exception e) {
-//	    	System.out.println("Not a valid path");
-//	    }
-//	}
-	
 	public static void clearConsole() {
 		System.out.println(new String(new char[50]).replace("\0", "\r\n"));
 	}
