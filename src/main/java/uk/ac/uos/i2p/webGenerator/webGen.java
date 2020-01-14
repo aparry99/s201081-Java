@@ -124,21 +124,34 @@ public class webGen {
 					
 					TemplateProcessor processor = new ReplaceTemplateText();
 					
-					Map<String, String> storedTemplates = webgen.processFiles(destination, source, templates);
+					Map<String, String> storedTemplates = webgen.processFiles(destination, templates, templates);
 					processor.loadTemplates(storedTemplates);
 					
 					for(Map.Entry<String, String> template : storedTemplates.entrySet()) {
-						String regex = "\\.\\w+";
-						String tempKey = template.getKey().toString().split(regex)[0];
+						String tempKey = new File(template.getKey()).getName();
+						
 						Map<String, Object> context = webgen.processContext(source, tempKey);
-						//System.out.println(context);
 						processor.expandTemplate(context);
+					}
+					
+					for (Map.Entry<String, String> expandedTemplates : storedTemplates.entrySet()) {
+						String tempKey = new File(expandedTemplates.getKey()).getName();
+						
+						Map<String, Object> context = webgen.processContext(source, tempKey);
+						
+						Path path = Paths.get(destination.getAbsolutePath() + "/" + expandedTemplates.getKey() + ".html");
+						try {
+							Files.write(path, Arrays.asList(processor.expandTemplate(context)));
+						}
+						catch(Exception e) {
+						}
 					}
 				}
 				else {
 					System.out.println("User declined process... \n Terminating program");
 			    	System.exit(2);
 				}
+				inputScanner.close();
 			}
 			else {
 				System.out.println("Output:");
@@ -149,16 +162,27 @@ public class webGen {
 				
 				TemplateProcessor processor = new ReplaceTemplateText();
 				
-				Map<String, String> storedTemplates = webgen.processFiles(destination, source, templates);
+				Map<String, String> storedTemplates = webgen.processFiles(destination, templates, templates);
 				processor.loadTemplates(storedTemplates);
 				
 				for(Map.Entry<String, String> template : storedTemplates.entrySet()) {
-					String regex = "\\.\\w+";
-					String tempKey = template.getKey().toString().split(regex)[0];
+					String tempKey = new File(template.getKey()).getName();
+					
 					Map<String, Object> context = webgen.processContext(source, tempKey);
-					//System.out.println(context);
 					processor.expandTemplate(context);
-					inputScanner.close();
+				}
+				
+				for (Map.Entry<String, String> expandedTemplates : storedTemplates.entrySet()) {
+					String tempKey = new File(expandedTemplates.getKey()).getName();
+					
+					Map<String, Object> context = webgen.processContext(source, tempKey);
+					
+					Path path = Paths.get(destination.getAbsolutePath() + "/" + expandedTemplates.getKey() + ".html");
+					try {
+						Files.write(path, Arrays.asList(processor.expandTemplate(context)));
+					}
+					catch(Exception e) {
+					}
 				}
 			}
 			System.exit(2);
@@ -205,7 +229,7 @@ public class webGen {
 //			expandedTemplates.setValue(processor.expandTemplate(context));
 			//System.out.println(Arrays.asList(processor.expandTemplate(context)));
 			//System.out.println(destination.getAbsolutePath());
-			Path path = Paths.get(destination.getAbsolutePath() + "/" + expandedTemplates.getKey() + ".txt");
+			Path path = Paths.get(destination.getAbsolutePath() + "/" + expandedTemplates.getKey() + ".html");
 			try {
 				Files.write(path, Arrays.asList(processor.expandTemplate(context)));
 			}
