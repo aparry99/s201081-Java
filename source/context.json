@@ -10,21 +10,21 @@
   "template": "java",
   "context": [{
     "language": "java",
-	"difficulty": "easy"
+	"difficulty": "good"
   }]
 },
 {
   "template": "subFolder",
   "context": [{
     "language": "java",
-	"difficulty": "easy"
+	"difficulty": "good"
   }]
 },
 {
   "template": "subsubFolder",
   "context": [{
     "language": "java",
-	"difficulty": "easy"
+	"difficulty": "good"
   }]
 },
 {
