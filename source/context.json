@@ -21,6 +21,13 @@
   }]
 },
 {
+  "template": "subsubFolder",
+  "context": [{
+    "language": "java",
+	"difficulty": "easy"
+  }]
+},
+{
   "template": "Test3",
   "context": [{
     "count": "three"

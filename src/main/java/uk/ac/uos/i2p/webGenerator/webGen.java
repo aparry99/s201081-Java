@@ -137,6 +137,7 @@ public class webGen {
 					for (Map.Entry<String, String> expandedTemplates : storedTemplates.entrySet()) {
 						String tempKey = new File(expandedTemplates.getKey()).getName();
 						
+						
 						Map<String, Object> context = webgen.processContext(source, tempKey);
 						
 						Path path = Paths.get(destination.getAbsolutePath() + "/" + expandedTemplates.getKey() + ".html");
@@ -209,7 +210,7 @@ public class webGen {
 //			System.out.println(context);
 			processor.expandTemplate(context);
 		}
-		
+		System.out.println("Output: \n");
 		for (Map.Entry<String, String> expandedTemplates : storedTemplates.entrySet()) {
 			//System.out.println(expandedTemplates.getKey());
 			String tempKey = new File(expandedTemplates.getKey()).getName();
@@ -236,7 +237,9 @@ public class webGen {
 			catch(Exception e) {
 				
 			}
+			System.out.println(processor.expandTemplate(context));
 		}
+		System.out.println("Please check your chosen destination directory for your processed files.");
 		//source, destination, templates
 		
 		//source = context

@@ -111,6 +111,128 @@ public class TemplateExampleTest {
 	}
 	
 	@Test
+	void WHEN_loadTemplateIsCalledAndContextIsNotFullyPresent() {
+		TemplateProcessor processor = new ReplaceTemplateText();
+		processor.loadTemplate("offer", "Dear ${name}, We are happy to offer you a bonus of £${amount}.");
+		
+		Map<String, Object> context = new HashMap<String, Object>();
+		
+		context.put("name", "Jimmy");
+		context.put("amount", "");
+		context.put("$template", "offer");
+		
+		String result = processor.expandTemplate(context);
+		
+		assertEquals("Dear Jimmy, We are happy to offer you a bonus of £.", result);
+	}
+	
+	@Test
+	void WHEN_loadTemplateIsCalledAndContextIsPresentButNot$Template() {
+		TemplateProcessor processor = new ReplaceTemplateText();
+		processor.loadTemplate("offer", "Dear ${name}, We are happy to offer you a bonus of £${amount}.");
+		
+		Map<String, Object> context = new HashMap<String, Object>();
+		
+		context.put("name", "Jimmy");
+		context.put("amount", "");
+		context.put("$template", "");
+		
+		String result = processor.expandTemplate(context);
+		
+		assertEquals("", result);
+	}
+	
+	@Test
+	void WHEN_loadTemplateIsCalledAndContextHasNullValue() {
+		TemplateProcessor processor = new ReplaceTemplateText();
+		processor.loadTemplate("offer", "Dear ${name}, We are happy to offer you a bonus of £${amount}.");
+		
+		Map<String, Object> context = new HashMap<String, Object>();
+		
+		context.put("name", null);
+		context.put("amount", null);
+		context.put("$template", null);
+		
+		String result = processor.expandTemplate(context);
+		
+		assertEquals("", result);
+	}
+	
+	@Test
+	void WHEN_loadTemplateIsCalledAndContextHasSurplusEntries() {
+		TemplateProcessor processor = new ReplaceTemplateText();
+		processor.loadTemplate("offer", "Dear ${name}, We are happy to offer you a bonus of £${amount}.");
+		
+		Map<String, Object> context = new HashMap<String, Object>();
+		
+		context.put("name", "Jimmy");
+		context.put("amount", 20);
+		context.put("occupation", "Software Engineer");
+		context.put("age", 27);
+		context.put("$template", "offer");
+		
+		String result = processor.expandTemplate(context);
+		
+		assertEquals("Dear Jimmy, We are happy to offer you a bonus of £20.", result);
+	}
+	
+	@Test
+	void WHEN_loadTemplateIsCalledAndMultipleTemplatesArePresent() {
+		TemplateProcessor processor = new ReplaceTemplateText();
+		processor.loadTemplate("offer1", "Dear ${name1}, We are happy to offer you a bonus of £${amount1}.");
+		processor.loadTemplate("offer2", "Dear ${name2}, We are happy to offer you a bonus of £${amount2}.");
+		processor.loadTemplate("offer3", "Dear ${name3}, We are happy to offer you a bonus of £${amount3}.");
+		
+		Map<String, Object> context = new HashMap<String, Object>();
+		
+		context.put("name1", "Jimmy");
+		context.put("amount1", 20);
+		context.put("$template", "offer1");
+		
+		String result = processor.expandTemplate(context);
+		
+		assertEquals("Dear Jimmy, We are happy to offer you a bonus of £20.", result);
+	}
+	
+	@Test
+	void WHEN_loadTemplateIsCalledAndMultipleContextArePresent() {
+		TemplateProcessor processor = new ReplaceTemplateText();
+		processor.loadTemplate("offer3", "Dear ${name3}, We are happy to offer you a bonus of £${amount3}.");
+		
+		Map<String, Object> context = new HashMap<String, Object>();
+		
+		context.put("name1", "Jimmy");
+		context.put("amount1", 20);
+		context.put("$template", "offer1");
+		context.put("name2", "Tim");
+		context.put("amount2", 30);
+		context.put("$template", "offer2");
+		context.put("name3", "Jon");
+		context.put("amount3", 15);
+		context.put("$template", "offer3");
+		
+		String result = processor.expandTemplate(context);
+		
+		assertEquals("Dear Jon, We are happy to offer you a bonus of £15.", result);
+	}
+	
+	@Test
+	void WHEN_loadTemplateIsCalledAndTemplateKeyIsEmpty() {
+		TemplateProcessor processor = new ReplaceTemplateText();
+		processor.loadTemplate("", "Dear ${name}, We are happy to offer you a bonus of £${amount}.");
+		
+		Map<String, Object> context = new HashMap<String, Object>();
+		
+		context.put("name", "Jimmy");
+		context.put("amount", 20);
+		context.put("$template", "");
+		
+		String result = processor.expandTemplate(context);
+		
+		assertEquals("Dear Jimmy, We are happy to offer you a bonus of £20.", result);
+	}	
+	
+	@Test
 	void WHEN_loadTemplateIsCalledAndSpecialCharactersArePresent() {
 		TemplateProcessor processor = new ReplaceTemplateText();
 		processor.loadTemplate("offer", "Dear ${name}, We are happy to offer you a bonus of £${amount}.");
