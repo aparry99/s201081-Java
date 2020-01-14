@@ -96,10 +96,10 @@ public class webGen {
 				userDestination = inputScanner.nextLine();
 				File d = new File(userDestination);
 				exists = d.exists();
-//			    if (!exists) {
-//			    	System.out.println("Invalid file path... \n Terminating program");
-//			    	System.exit(2);
-//			    }
+			    if (!exists) {
+			    	System.out.println("Invalid file path... \n Terminating program");
+			    	System.exit(2);
+			    }
 				webGen.clearConsole();
 				
 				System.out.println("Would you like to process your template with directories listed below? Y/N \n");
@@ -147,6 +147,8 @@ public class webGen {
 						catch(Exception e) {
 						}
 					}
+					System.out.println("Finished processing");
+					System.exit(2);
 				}
 				else {
 					System.out.println("User declined process... \n Terminating program");
@@ -155,7 +157,8 @@ public class webGen {
 				inputScanner.close();
 			}
 			else {
-				System.out.println("Output:");
+				System.out.println("Finished processing");
+				System.exit(2);
 				webGen webgen = new webGen();
 				File destination = new File(".\\destination");
 				File source = new File(".\\source");
@@ -194,42 +197,20 @@ public class webGen {
 		File source = new File(args[1]);
 		File templates = new File(args[2]);
 		
-		//System.out.println(source.getAbsolutePath());
-		
 		TemplateProcessor processor = new ReplaceTemplateText();
 		
 		Map<String, String> storedTemplates = webgen.processFiles(destination, templates, templates);
-		//System.out.println(storedTemplates);
 		processor.loadTemplates(storedTemplates);
 		
 		for(Map.Entry<String, String> template : storedTemplates.entrySet()) {
-//			String regexFindDot = "\\.\\w+";
 			String tempKey = new File(template.getKey()).getName();
-			
 			Map<String, Object> context = webgen.processContext(source, tempKey);
-//			System.out.println(context);
 			processor.expandTemplate(context);
 		}
 		System.out.println("Output: \n");
 		for (Map.Entry<String, String> expandedTemplates : storedTemplates.entrySet()) {
-			//System.out.println(expandedTemplates.getKey());
 			String tempKey = new File(expandedTemplates.getKey()).getName();
-			//System.out.println(tempKey);
-//			Pattern pattern = Pattern.compile("[^\\\\]+\\.");
-//			
-//			Matcher m = pattern.matcher(expandedTemplates.getKey());
-//			String tempKey = "";
-//			if(m.find()) {
-//			    tempKey = m.group(0).replace(".", "");
-//			}
-			//System.out.println(tempKey + "          " + expandedTemplates.getKey());
-			
 			Map<String, Object> context = webgen.processContext(source, tempKey);
-			
-			
-//			expandedTemplates.setValue(processor.expandTemplate(context));
-			//System.out.println(Arrays.asList(processor.expandTemplate(context)));
-			//System.out.println(destination.getAbsolutePath());
 			Path path = Paths.get(destination.getAbsolutePath() + "/" + expandedTemplates.getKey() + ".html");
 			try {
 				Files.write(path, Arrays.asList(processor.expandTemplate(context)));
@@ -240,16 +221,6 @@ public class webGen {
 			System.out.println(processor.expandTemplate(context));
 		}
 		System.out.println("Please check your chosen destination directory for your processed files.");
-		//source, destination, templates
-		
-		//source = context
-		//a) .properties file
-		//b) .json file
-		
-		//destination = folder to spit out completed templates
-		
-		//templates = where templates are stored
-		// folder with any text format
 	}
 	
 	public static void clearConsole() {
@@ -266,10 +237,8 @@ public class webGen {
 		
 		Map<String, String> newTemplates = new HashMap<>();
 		
-		//https://www.mkyong.com/java/how-to-read-file-from-java-bufferedreader-example/
 		for (File child : files) {
 			if (!child.isDirectory()) {
-				//find out why buffered reader
 				//read file line by line, puts into newTemplates via string
 				try (BufferedReader buffread = new BufferedReader (new FileReader(child.getPath()))) {
 					StringBuilder stringbuild = new StringBuilder();
@@ -282,19 +251,9 @@ public class webGen {
 						line = buffread.readLine();
 					}
 					String everything = stringbuild.toString();
-					
 					String regex = "\\.\\w+";
-//					String childName = child.getName().split(regex)[0];
-					
 					String utfReplace = everything.replaceAll(new String("Â".getBytes("UTF-8"), "UTF-8"), "");
-					
-//					newTemplates.put(childName, utfReplace);
-//					File childName = new File(child.getAbsolutePath().toString().replace(source.getAbsolutePath(), "").substring(1).split(regex)[0]);
-					
-//					newTemplates.put(new File(child.getAbsolutePath().toString().replace(source.getAbsolutePath(), "")).getName().split(regex)[0], utfReplace);
 					newTemplates.put(child.getAbsolutePath().toString().replace(source.getAbsolutePath(), "").substring(1).split(regex)[0], utfReplace);
-//					System.out.println(new File(child.getAbsolutePath().toString().replace(source.getAbsolutePath(), "")).getName().split(regex)[0]);
-//					System.out.println(child.getAbsolutePath().toString().replace(source.getAbsolutePath(), "").substring(1).split(regex)[0]);
 				}
 				catch (Exception e) {
 					System.out.println(e);
@@ -302,19 +261,11 @@ public class webGen {
 			}
 			else {
 				//Below line makes new folder at child location, instead need to get pat of destination and put it in there
-				//System.out.println(child.getAbsolutePath());
-				//System.out.println(source.getAbsolutePath());
-				//System.out.println(destination.getAbsolutePath());
 				
 				newTemplates.putAll(processFiles(destination, source, new File(child.getAbsolutePath())));
 				new File(child.getAbsolutePath().replace(source.getAbsolutePath(), destination.getAbsolutePath())).mkdirs(); //Makes new folder.
-				//Line below to call this function again, but for this nested folder.
-				
-//				System.out.println("Not a file");
-//				System.exit(2);
 			}
 		}
-		//System.out.println(newTemplates);
 		return newTemplates;
 
 	}
@@ -334,19 +285,13 @@ public class webGen {
 					try {
 						Gson gson = new Gson();
 						JsonElement json = gson.fromJson(new JsonReader(new FileReader(child.getAbsolutePath())), JsonElement.class);
-						//System.out.println(response);
 						for (JsonElement jsonContext : json.getAsJsonArray()) {
-							//System.out.println(jsonContext.getAsJsonObject().get("template").getAsString());
-							//System.out.println(templateName);
 							if (jsonContext.getAsJsonObject().get("template").getAsString().equals(templateName)) {
 								//map object from json to string $template in hashmap newContext
 								newContext.put("$template", jsonContext.getAsJsonObject().get("template").getAsString());
-								//System.out.println(jsonContext.getAsJsonObject().get("template").getAsString());
 								for (JsonElement jsonTemplate : jsonContext.getAsJsonObject().get("context").getAsJsonArray()) {
 									for(String templateContext : jsonTemplate.getAsJsonObject().keySet()) {
 										newContext.put(templateContext, jsonTemplate.getAsJsonObject().get(templateContext).getAsString());
-//										System.out.println("getKey \n " + templateContext);
-//										System.out.println("getValue \n " + jsonTemplate.getAsJsonObject().get(templateContext).getAsString());
 									}
 								}
 							}
