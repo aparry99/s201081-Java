@@ -63,6 +63,22 @@ public class TemplateExampleTest {
 	}
 	
 	@Test
+	void WHEN_loadTemplateIsCalledAndTemplateNameIsNotPresent() {
+		TemplateProcessor processor = new ReplaceTemplateText();
+		processor.loadTemplate("", "Dear ${name}, We are happy to offer you a bonus of £${amount}.");
+		
+		Map<String, Object> context = new HashMap<String, Object>();
+		
+		context.put("name", "Arthur");
+		context.put("amount", 20);
+		context.put("$template", "offer");
+		
+		String result = processor.expandTemplate(context);
+		
+		assertEquals("", result);
+	}
+	
+	@Test
 	void WHEN_loadTemplateIsCalledAndTemplateIsNotPresent() {
 		TemplateProcessor processor = new ReplaceTemplateText();
 		processor.loadTemplate("offer", null);
@@ -72,6 +88,22 @@ public class TemplateExampleTest {
 		context.put("name", "Arthur");
 		context.put("amount", 20);
 		context.put("$template", "offer");
+		
+		String result = processor.expandTemplate(context);
+		
+		assertEquals("", result);
+	}
+	
+	@Test
+	void WHEN_loadTemplateIsCalledAndContextIsNotPresent() {
+		TemplateProcessor processor = new ReplaceTemplateText();
+		processor.loadTemplate("offer", null);
+		
+		Map<String, Object> context = new HashMap<String, Object>();
+		
+		context.put("name", "");
+		context.put("amount", "");
+		context.put("$template", "");
 		
 		String result = processor.expandTemplate(context);
 		
@@ -137,6 +169,44 @@ public class TemplateExampleTest {
 	}
 	
 	@Test
+	void WHEN_loadTemplatesAreCalledAndSpecialCharactersArePresent() {		
+		TemplateProcessor processor = new ReplaceTemplateText();
+		
+		Map<String, String> templates = new HashMap<>();
+		templates.put("offer", "Dear ${name}, We are happy to offer you a bonus of £${amount}.");
+		processor.loadTemplates(templates);
+		
+		Map<String, Object> context = new HashMap<String, Object>();
+		
+		context.put("name", "~!@#%^&*()-_=+[]\\{}|;':\",./<>?");
+		context.put("amount", 20);
+		context.put("$template", "offer");
+		
+		String result = processor.expandTemplate(context);
+		
+		assertEquals("Dear ~!@#%^&*()-_=+[]{}|;':\",./<>?, We are happy to offer you a bonus of £20.", result);
+	}
+	
+	@Test
+	void WHEN_loadTemplatesAreCalledAndContextIsBlank() {		
+		TemplateProcessor processor = new ReplaceTemplateText();
+		
+		Map<String, String> templates = new HashMap<>();
+		templates.put("offer", "Dear ${name}, We are happy to offer you a bonus of £${amount}.");
+		processor.loadTemplates(templates);
+		
+		Map<String, Object> context = new HashMap<String, Object>();
+		
+		context.put("name", "");
+		context.put("amount", "");
+		context.put("$template", "");
+		
+		String result = processor.expandTemplate(context);
+		
+		assertEquals("", result);
+	}
+	
+	@Test
 	void WHEN_loadTemplatesAreCalledAndTemplatesAreDifferent_BUT_ContextMatches() {
 		TemplateProcessor processor = new ReplaceTemplateText();
 		
@@ -153,6 +223,25 @@ public class TemplateExampleTest {
 		String result = processor.expandTemplate(context);
 		
 		assertEquals("Hi Jimmy, The weather today is cold.", result);
+	}
+	
+	@Test
+	void WHEN_loadTemplatesAreCalledAndTemplateNameIsNotPresent() {
+		TemplateProcessor processor = new ReplaceTemplateText();
+		
+		Map<String, String> templates = new HashMap<>();
+		templates.put("", "Dear ${name}, We are happy to offer you a bonus of £${amount}.");
+		processor.loadTemplates(templates);
+		
+		Map<String, Object> context = new HashMap<String, Object>();
+		
+		context.put("name", "Arthur");
+		context.put("amount", 20);
+		context.put("$template", "offer");
+		
+		String result = processor.expandTemplate(context);
+		
+		assertEquals("", result);
 	}
 	
 	@Test
